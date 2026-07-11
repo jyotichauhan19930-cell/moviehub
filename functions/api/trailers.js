@@ -18,28 +18,10 @@ export async function onRequestPost(context) {
     const { request, env } = context;
     try {
         const data = await request.json();
-        const { title, youtubeUrl, year = '', genre = '' } = data;
+        const { videoId, youtubeUrl, title, description } = data;
 
-        if (!title || !youtubeUrl) {
-            return new Response(JSON.stringify({ success: false, error: 'Title and YouTube URL required' }), {
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
-        // Extract YouTube video ID
-        let videoId = null;
-        const patterns = [
-            /(?:youtube\.com\/watch\?v=)([^&]+)/,
-            /(?:youtu\.be\/)([^?]+)/,
-            /(?:youtube\.com\/embed\/)([^?]+)/
-        ];
-        for (const pattern of patterns) {
-            const match = youtubeUrl.match(pattern);
-            if (match) { videoId = match[1]; break; }
-        }
-
-        if (!videoId) {
-            return new Response(JSON.stringify({ success: false, error: 'Invalid YouTube URL' }), {
+        if (!videoId || !youtubeUrl) {
+            return new Response(JSON.stringify({ success: false, error: 'Video ID and URL required' }), {
                 headers: { 'Content-Type': 'application/json' }
             });
         }
@@ -48,12 +30,11 @@ export async function onRequestPost(context) {
 
         const newTrailer = {
             id: Date.now().toString(36) + Math.random().toString(36).substring(2, 7),
-            title,
-            youtubeUrl,
-            year,
-            genre,
+            title: title || 'Untitled Movie',
+            youtubeUrl: youtubeUrl,
+            description: description || '',
             thumbnail: 'https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg',
-            videoId,
+            videoId: videoId,
             views: 0,
             createdAt: new Date().toISOString()
         };
@@ -73,8 +54,8 @@ export async function onRequestPost(context) {
 
 // ─── VIEW COUNT ────────────────────────────────────────────────────────────
 export async function onRequestPostView(context) {
-    const { request, env } = context;
-    const url = new URL(request.url);
+    const { env } = context;
+    const url = new URL(context.request.url);
     const id = url.pathname.split('/')[3];
     
     try {
@@ -89,6 +70,36 @@ export async function onRequestPostView(context) {
         });
     } catch (e) {
         return new Response(JSON.stringify({ success: false, error: e.message }), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// ─── YOUTUBE TITLE FETCH ──────────────────────────────────────────────────
+export async function onRequestYoutube(context) {
+    const url = new URL(context.request.url);
+    const videoId = url.searchParams.get('videoId');
+    
+    if (!videoId) {
+        return new Response(JSON.stringify({ error: 'Video ID required' }), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+
+    try {
+        // YouTube oEmbed API (no API key required)
+        const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+        if (!res.ok) {
+            return new Response(JSON.stringify({ error: 'Video not found' }), {
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+        const data = await res.json();
+        return new Response(JSON.stringify({ title: data.title }), {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    } catch (e) {
+        return new Response(JSON.stringify({ error: e.message }), {
             headers: { 'Content-Type': 'application/json' }
         });
     }
