@@ -1,0 +1,11 @@
+{
+  "name": "movieverse-worker",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-07-11",
+
+  "vars": {},
+
+  "observability": {
+    "enabled": true
+  }
+}
