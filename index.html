@@ -1,483 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MovieVerse - Watch Latest Movie Trailers</title>
-
-<link rel="preconnect" href="https://image.tmdb.org">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-background:#0f172a;
-font-family:Arial,Helvetica,sans-serif;
-color:white;
-}
-
-a{
-text-decoration:none;
-color:white;
-}
-
-header{
-position:fixed;
-top:0;
-left:0;
-right:0;
-height:70px;
-background:#111827;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 40px;
-z-index:1000;
-box-shadow:0 5px 15px rgba(0,0,0,.3);
-}
-
-.logo{
-font-size:32px;
-font-weight:bold;
-color:#e50914;
-}
-
-nav{
-display:flex;
-gap:30px;
-}
-
-nav a{
-font-size:15px;
-transition:.3s;
-}
-
-nav a:hover{
-color:#ffd54f;
-}
-
-.search{
-display:flex;
-align-items:center;
-}
-
-.search input{
-width:280px;
-height:42px;
-border:none;
-border-radius:30px;
-padding:0 20px;
-font-size:15px;
-outline:none;
-}
-
-.hero{
-
-margin-top:70px;
-
-height:650px;
-
-background:url('https://image.tmdb.org/t/p/original/9nhjGaFLKtddDPtPaX5EmKqsWdH.jpg');
-
-background-size:cover;
-
-background-position:center;
-
-display:flex;
-
-align-items:center;
-
-padding:70px;
-
-position:relative;
-
-}
-
-.hero::before{
-
-content:'';
-
-position:absolute;
-
-inset:0;
-
-background:linear-gradient(to right,#000 20%,transparent);
-
-}
-
-.hero-content{
-
-position:relative;
-
-max-width:650px;
-
-}
-
-.hero h1{
-
-font-size:60px;
-
-margin-bottom:20px;
-
-}
-
-.hero p{
-
-font-size:18px;
-
-line-height:1.8;
-
-color:#ddd;
-
-}
-
-.hero-buttons{
-
-margin-top:40px;
-
-display:flex;
-
-gap:20px;
-
-}
-
-.btn{
-
-padding:14px 35px;
-
-border-radius:50px;
-
-font-weight:bold;
-
-font-size:16px;
-
-cursor:pointer;
-
-}
-
-.watch{
-
-background:#e50914;
-
-}
-
-.info{
-
-background:#374151;
-
-}
-
-.section{
-
-padding:60px;
-
-}
-
-.section-title{
-
-font-size:34px;
-
-margin-bottom:30px;
-
-}
-
-.movies{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-
-gap:25px;
-
-}
-
-.card{
-
-background:#1e293b;
-
-border-radius:15px;
-
-overflow:hidden;
-
-transition:.35s;
-
-cursor:pointer;
-
-}
-
-.card:hover{
-
-transform:translateY(-8px);
-
-box-shadow:0 15px 30px rgba(0,0,0,.4);
-
-}
-
-.card img{
-
-width:100%;
-
-display:block;
-
-}
-
-.card-body{
-
-padding:15px;
-
-}
-
-.card h3{
-
-font-size:18px;
-
-margin-bottom:10px;
-
-}
-
-.rating{
-
-color:#ffd54f;
-
-margin-bottom:10px;
-
-}
-
-.release{
-
-font-size:14px;
-
-color:#bbb;
-
-}
-
-.ad{
-
-margin:60px;
-
-height:90px;
-
-background:#202938;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:30px;
-
-border-radius:12px;
-
-color:#aaa;
-
-}
-
-footer{
-
-padding:50px;
-
-text-align:center;
-
-background:#111827;
-
-color:#888;
-
-margin-top:70px;
-
-}
-
-@media(max-width:900px){
-
-header{
-
-padding:20px;
-
-flex-direction:column;
-
-height:auto;
-
-gap:15px;
-
-}
-
-.hero{
-
-height:auto;
-
-padding:40px 20px;
-
-}
-
-.hero h1{
-
-font-size:38px;
-
-}
-
-.search input{
-
-width:100%;
-
-}
-
-.section{
-
-padding:20px;
-
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Movie Trailer Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e17; color: #e0e0e0; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 20px 0; border-bottom: 2px solid #e94560; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { font-size: 28px; font-weight: 800; }
+        .logo span { color: #e94560; }
+        .btn-add { background: #e94560; color: white; padding: 8px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; }
+        .btn-add:hover { background: #c73652; }
+        .hero { text-align: center; padding: 60px 0 40px; background: linear-gradient(135deg, #0a0e17, #1a1a2e); }
+        .hero h1 { font-size: 3rem; font-weight: 900; margin-bottom: 10px; }
+        .hero h1 span { color: #e94560; }
+        .hero p { color: #8899aa; font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px; }
+        .trailers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; padding: 40px 0; }
+        .trailer-card { background: rgba(255,255,255,0.04); border-radius: 16px; overflow: hidden; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
+        .trailer-card:hover { transform: translateY(-5px); border-color: #e94560; }
+        .trailer-card .thumbnail { position: relative; height: 200px; background: #1a1a2e; display: flex; align-items: center; justify-content: center; font-size: 4rem; overflow: hidden; }
+        .trailer-card .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+        .trailer-card .thumbnail .play-btn { position: absolute; width: 70px; height: 70px; background: rgba(233,69,96,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; transition: all 0.3s; }
+        .trailer-card:hover .play-btn { transform: scale(1.1); }
+        .trailer-card .info { padding: 18px 20px; }
+        .trailer-card .info h3 { font-size: 1.1rem; margin-bottom: 5px; }
+        .trailer-card .info .meta { display: flex; gap: 15px; font-size: 0.8rem; color: #8899aa; }
+        .trailer-card .info .views { color: #e94560; font-weight: 600; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #1a1a2e; border-radius: 16px; max-width: 600px; width: 100%; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-close { float: right; background: none; border: none; color: #8899aa; font-size: 1.5rem; cursor: pointer; }
+        .modal-close:hover { color: #fff; }
+        .modal h2 { margin-bottom: 20px; color: #e94560; }
+        .modal input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
+        .modal input:focus { border-color: #e94560; }
+        .modal .btn-submit { width: 100%; padding: 14px; background: #e94560; border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .modal .btn-submit:hover { background: #c73652; }
+        .empty-state { text-align: center; padding: 80px 20px; }
+        .empty-state .icon { font-size: 4rem; margin-bottom: 20px; }
+        .empty-state h2 { font-size: 1.8rem; margin-bottom: 10px; }
+        .empty-state p { color: #8899aa; }
+        .footer { text-align: center; padding: 30px 0; color: #445; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
+        .play-modal { max-width: 850px !important; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        .play-info { padding: 15px 0; }
+        .play-info h3 { color: #fff; }
+        .play-info p { color: #8899aa; }
+        @media (max-width: 768px) { .hero h1 { font-size: 2rem; } .trailers-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
-
 <body>
-
-<header>
-
-<div class="logo">MovieVerse</div>
-
-<nav>
-
-<a href="#">Home</a>
-
-<a href="#">Movies</a>
-
-<a href="#">Trending</a>
-
-<a href="#">Upcoming</a>
-
-<a href="#">Genres</a>
-
-</nav>
-
-<div class="search">
-
-<input id="searchBox" placeholder="Search Movies...">
-
-</div>
-
-</header>
-
-<section class="hero">
-
-<div class="hero-content">
-
-<h1>Watch Latest Movie Trailers</h1>
-
-<p>
-
-Discover trending movies, upcoming releases and official trailers from around the world.
-
-</p>
-
-<div class="hero-buttons">
-
-<div class="btn watch">
-
-▶ Watch Trailer
-
-</div>
-
-<div class="btn info">
-
-More Info
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-<div class="section">
-
-<div class="section-title">
-
-🔥 Trending Movies
-
-</div>
-
-<div class="movies" id="trendingMovies">
-
-</div>
-
-</div>
-
-<div class="ad">
-
-728 x 90 Adsterra Banner
-
-</div>
-
-<footer>
-
-© 2026 MovieVerse
-
-</footer>
-
-<script>
-
-const apiKey="5435e1c8216e371197f604be65aac260";
-
-async function loadTrending(){
-
-const url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`;
-
-const res=await fetch(url);
-
-const data=await res.json();
-
-const container=document.getElementById("trendingMovies");
-
-container.innerHTML="";
-
-data.results.slice(0,12).forEach(movie=>{
-
-container.innerHTML+=`
-
-<div class="card">
-
-<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
-
-<div class="card-body">
-
-<h3>${movie.title}</h3>
-
-<div class="rating">
-
-⭐ ${movie.vote_average.toFixed(1)}
-
-</div>
-
-<div class="release">
-
-${movie.release_date}
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-}
-
-loadTrending();
-
-</script>
-
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">🎬 <span>Trailer</span>Hub</div>
+            <button class="btn-add" id="addBtn">+ Add New</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Discover <span>Movie Trailers</span></h1>
+            <p>Watch and share the latest movie trailers from YouTube. Add your own favorites!</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div id="trailersGrid" class="trailers-grid"></div>
+    </div>
+
+    <!-- ADD MODAL -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <button class="modal-close" id="closeAddBtn">✕</button>
+            <h2>🎬 Add New Trailer</h2>
+            <input type="text" id="inputTitle" placeholder="Movie Title *">
+            <input type="url" id="inputUrl" placeholder="YouTube URL *">
+            <input type="text" id="inputYear" placeholder="Release Year">
+            <input type="text" id="inputGenre" placeholder="Genre">
+            <button class="btn-submit" id="submitBtn">Add Trailer →</button>
+        </div>
+    </div>
+
+    <!-- PLAY MODAL -->
+    <div class="modal-overlay" id="playModal">
+        <div class="modal play-modal">
+            <button class="modal-close" id="closePlayBtn">✕</button>
+            <div class="video-wrapper">
+                <iframe id="playerFrame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="play-info">
+                <h3 id="playTitle"></h3>
+                <p id="playDesc"></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 TrailerHub — Built with ❤️</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = '/api/trailers';
+        let trailers = [];
+
+        async function loadTrailers() {
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
+                trailers = data.trailers || [];
+                renderTrailers();
+            } catch (e) {
+                document.getElementById('trailersGrid').innerHTML = '<div class="empty-state"><div class="icon">🎬</div><h2>No Trailers Yet</h2><p>Click "Add New" to add your first movie trailer!</p></div>';
+            }
+        }
+
+        function renderTrailers() {
+            const grid = document.getElementById('trailersGrid');
+            if (trailers.length === 0) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🎬</div><h2>No Trailers Yet</h2><p>Click "Add New" to add your first movie trailer!</p></div>';
+                return;
+            }
+            let html = '';
+            for (const t of trailers) {
+                html += `<div class="trailer-card" onclick="playTrailer('${t.id}')">
+                    <div class="thumbnail">${t.thumbnail ? `<img src="${t.thumbnail}" alt="${t.title}"/>` : '🎬'}
+                    <div class="play-btn">▶</div></div>
+                    <div class="info"><h3>${t.title}</h3>
+                    <div class="meta">${t.year ? `<span>📅 ${t.year}</span>` : ''}${t.genre ? `<span>🎭 ${t.genre}</span>` : ''}
+                    <span class="views">👁 ${t.views || 0}</span></div></div></div>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        document.getElementById('addBtn').addEventListener('click', () => {
+            document.getElementById('addModal').classList.add('active');
+        });
+
+        document.getElementById('closeAddBtn').addEventListener('click', () => {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('inputTitle').value = '';
+            document.getElementById('inputUrl').value = '';
+            document.getElementById('inputYear').value = '';
+            document.getElementById('inputGenre').value = '';
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const title = document.getElementById('inputTitle').value.trim();
+            const youtubeUrl = document.getElementById('inputUrl').value.trim();
+            const year = document.getElementById('inputYear').value.trim();
+            const genre = document.getElementById('inputGenre').value.trim();
+
+            if (!title || !youtubeUrl) {
+                alert('Please fill in Title and YouTube URL');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, youtubeUrl, year, genre })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    alert('✅ Trailer added successfully!');
+                    document.getElementById('addModal').classList.remove('active');
+                    document.getElementById('inputTitle').value = '';
+                    document.getElementById('inputUrl').value = '';
+                    document.getElementById('inputYear').value = '';
+                    document.getElementById('inputGenre').value = '';
+                    loadTrailers();
+                } else {
+                    alert('❌ Error: ' + result.error);
+                }
+            } catch (e) {
+                alert('❌ Error: ' + e.message);
+            }
+        });
+
+        document.getElementById('closePlayBtn').addEventListener('click', () => {
+            document.getElementById('playModal').classList.remove('active');
+            document.getElementById('playerFrame').src = '';
+        });
+
+        function playTrailer(id) {
+            const trailer = trailers.find(t => t.id === id);
+            if (!trailer) return;
+            let embedUrl = trailer.youtubeUrl.replace('watch?v=', 'embed/');
+            if (embedUrl.indexOf('embed/') === -1) {
+                const parts = trailer.youtubeUrl.split('v=');
+                if (parts.length > 1) embedUrl = 'https://www.youtube.com/embed/' + parts[1].split('&')[0];
+            }
+            document.getElementById('playerFrame').src = embedUrl + '?autoplay=1';
+            document.getElementById('playTitle').textContent = trailer.title;
+            document.getElementById('playDesc').textContent = 'Watch the trailer for ' + trailer.title;
+            document.getElementById('playModal').classList.add('active');
+            fetch(API_URL + '/' + trailer.id + '/view', { method: 'POST' });
+        }
+
+        loadTrailers();
+    </script>
 </body>
 </html>
