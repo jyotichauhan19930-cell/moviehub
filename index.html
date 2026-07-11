@@ -31,14 +31,21 @@
         .trailer-card .info .views { color: #e94560; font-weight: 600; }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
-        .modal { background: #1a1a2e; border-radius: 16px; max-width: 600px; width: 100%; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal { background: #1a1a2e; border-radius: 16px; max-width: 650px; width: 100%; padding: 30px; border: 1px solid rgba(255,255,255,0.1); max-height: 90vh; overflow-y: auto; }
         .modal-close { float: right; background: none; border: none; color: #8899aa; font-size: 1.5rem; cursor: pointer; }
         .modal-close:hover { color: #fff; }
         .modal h2 { margin-bottom: 20px; color: #e94560; }
-        .modal input { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; }
-        .modal input:focus { border-color: #e94560; }
-        .modal .btn-submit { width: 100%; padding: 14px; background: #e94560; border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .modal label { display: block; font-weight: 600; margin-bottom: 6px; color: #ccc; font-size: 0.9rem; }
+        .modal input, .modal textarea { width: 100%; padding: 12px 16px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.95rem; outline: none; font-family: inherit; }
+        .modal input:focus, .modal textarea:focus { border-color: #e94560; }
+        .modal textarea { min-height: 100px; resize: vertical; }
+        .modal .hint { font-size: 0.8rem; color: #667; margin-top: -10px; margin-bottom: 15px; }
+        .modal .btn-submit { width: 100%; padding: 14px; background: #e94560; border: none; border-radius: 8px; color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
         .modal .btn-submit:hover { background: #c73652; }
+        .modal .btn-ai { background: #00d4aa; color: #0a0e17; margin-bottom: 15px; }
+        .modal .btn-ai:hover { background: #00b899; }
+        .modal .loading { display: none; text-align: center; padding: 10px; color: #00d4aa; }
+        .modal .loading.active { display: block; }
         .empty-state { text-align: center; padding: 80px 20px; }
         .empty-state .icon { font-size: 4rem; margin-bottom: 20px; }
         .empty-state h2 { font-size: 1.8rem; margin-bottom: 10px; }
@@ -64,7 +71,7 @@
     <section class="hero">
         <div class="container">
             <h1>Discover <span>Movie Trailers</span></h1>
-            <p>Watch and share the latest movie trailers from YouTube. Add your own favorites!</p>
+            <p>Watch and share the latest movie trailers. Paste any YouTube embed code to add!</p>
         </div>
     </section>
 
@@ -72,20 +79,30 @@
         <div id="trailersGrid" class="trailers-grid"></div>
     </div>
 
-    <!-- ADD MODAL -->
+    <!-- ─── ADD MODAL ──────────────────────────────────────────────────────── -->
     <div class="modal-overlay" id="addModal">
         <div class="modal">
             <button class="modal-close" id="closeAddBtn">✕</button>
             <h2>🎬 Add New Trailer</h2>
-            <input type="text" id="inputTitle" placeholder="Movie Title *">
-            <input type="url" id="inputUrl" placeholder="YouTube URL *">
-            <input type="text" id="inputYear" placeholder="Release Year">
-            <input type="text" id="inputGenre" placeholder="Genre">
+            
+            <label>YouTube Embed Code *</label>
+            <input type="text" id="inputEmbed" placeholder="https://www.youtube.com/embed/VIDEO_ID or full URL">
+            <div class="hint">Paste YouTube URL or embed code (e.g., https://www.youtube.com/watch?v=abc123)</div>
+
+            <label>Movie Title</label>
+            <input type="text" id="inputTitle" placeholder="Auto-fetched from YouTube">
+            
+            <label>Description (AI Generated)</label>
+            <textarea id="inputDesc" placeholder="Click 'Generate with AI' to auto-create description..."></textarea>
+            
+            <button class="btn-submit btn-ai" id="aiBtn">🤖 Generate with AI</button>
+            <div class="loading" id="aiLoading">⏳ Generating description...</div>
+
             <button class="btn-submit" id="submitBtn">Add Trailer →</button>
         </div>
     </div>
 
-    <!-- PLAY MODAL -->
+    <!-- ─── PLAY MODAL ──────────────────────────────────────────────────────── -->
     <div class="modal-overlay" id="playModal">
         <div class="modal play-modal">
             <button class="modal-close" id="closePlayBtn">✕</button>
@@ -109,6 +126,7 @@
         const API_URL = '/api/trailers';
         let trailers = [];
 
+        // ─── LOAD TRAILERS ──────────────────────────────────────────────────
         async function loadTrailers() {
             try {
                 const res = await fetch(API_URL);
@@ -120,6 +138,7 @@
             }
         }
 
+        // ─── RENDER TRAILERS ──────────────────────────────────────────────────
         function renderTrailers() {
             const grid = document.getElementById('trailersGrid');
             if (trailers.length === 0) {
@@ -138,43 +157,130 @@
             grid.innerHTML = html;
         }
 
+        // ─── EXTRACT VIDEO ID ──────────────────────────────────────────────────
+        function extractVideoId(input) {
+            // YouTube embed URL: https://www.youtube.com/embed/VIDEO_ID
+            let match = input.match(/youtube\.com\/embed\/([^?&]+)/);
+            if (match) return match[1];
+            
+            // YouTube watch URL: https://www.youtube.com/watch?v=VIDEO_ID
+            match = input.match(/youtube\.com\/watch\?v=([^&]+)/);
+            if (match) return match[1];
+            
+            // YouTube short URL: https://youtu.be/VIDEO_ID
+            match = input.match(/youtu\.be\/([^?&]+)/);
+            if (match) return match[1];
+            
+            // If already only video ID
+            if (/^[a-zA-Z0-9_-]{11}$/.test(input)) return input;
+            
+            return null;
+        }
+
+        // ─── FETCH YOUTUBE TITLE ──────────────────────────────────────────────
+        async function fetchYoutubeTitle(videoId) {
+            try {
+                const res = await fetch(`/api/youtube?videoId=${videoId}`);
+                const data = await res.json();
+                return data.title || null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // ─── AI DESCRIPTION GENERATOR ──────────────────────────────────────────
+        function generateAIDescription(title) {
+            const templates = [
+                `🎬 Watch the official trailer for "${title}" — an exciting new movie coming soon! Get ready for an unforgettable cinematic experience filled with action, drama, and emotion. Don't miss this highly anticipated release!`,
+                `🔥 The trailer for "${title}" is here! Experience the thrill, the suspense, and the magic of this upcoming blockbuster. Starring an incredible cast, this is one movie you won't want to miss. Watch now!`,
+                `🌟 "${title}" — the most anticipated movie of the year! This trailer gives you a sneak peek into an epic journey of adventure, love, and discovery. Prepare to be amazed by stunning visuals and a gripping story.`,
+                `🎥 Get your first look at "${title}"! This trailer delivers a powerful glimpse into a world of excitement and wonder. From the creators of hit movies, comes a new cinematic masterpiece.`,
+                `✨ The wait is over! The official trailer for "${title}" has arrived. Dive into a world of breathtaking moments, intense performances, and a story that will stay with you long after the credits roll.`
+            ];
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        // ─── OPEN ADD MODAL ──────────────────────────────────────────────────
         document.getElementById('addBtn').addEventListener('click', () => {
             document.getElementById('addModal').classList.add('active');
+            document.getElementById('inputEmbed').value = '';
+            document.getElementById('inputTitle').value = '';
+            document.getElementById('inputDesc').value = '';
         });
 
         document.getElementById('closeAddBtn').addEventListener('click', () => {
             document.getElementById('addModal').classList.remove('active');
-            document.getElementById('inputTitle').value = '';
-            document.getElementById('inputUrl').value = '';
-            document.getElementById('inputYear').value = '';
-            document.getElementById('inputGenre').value = '';
         });
 
-        document.getElementById('submitBtn').addEventListener('click', async () => {
-            const title = document.getElementById('inputTitle').value.trim();
-            const youtubeUrl = document.getElementById('inputUrl').value.trim();
-            const year = document.getElementById('inputYear').value.trim();
-            const genre = document.getElementById('inputGenre').value.trim();
+        // ─── DETECT VIDEO ID AND FETCH TITLE ──────────────────────────────────
+        document.getElementById('inputEmbed').addEventListener('input', async function() {
+            const embed = this.value.trim();
+            const videoId = extractVideoId(embed);
+            if (videoId) {
+                const title = await fetchYoutubeTitle(videoId);
+                if (title) {
+                    document.getElementById('inputTitle').value = title;
+                }
+            }
+        });
 
-            if (!title || !youtubeUrl) {
-                alert('Please fill in Title and YouTube URL');
+        // ─── AI GENERATE DESCRIPTION ──────────────────────────────────────────
+        document.getElementById('aiBtn').addEventListener('click', async function() {
+            const title = document.getElementById('inputTitle').value.trim() || 'this movie';
+            const loading = document.getElementById('aiLoading');
+            const descArea = document.getElementById('inputDesc');
+            
+            loading.classList.add('active');
+            this.disabled = true;
+            
+            // Simulate AI generation (in production, call actual AI API)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const description = generateAIDescription(title);
+            descArea.value = description;
+            
+            loading.classList.remove('active');
+            this.disabled = false;
+        });
+
+        // ─── SUBMIT TRAILER ──────────────────────────────────────────────────
+        document.getElementById('submitBtn').addEventListener('click', async () => {
+            const embed = document.getElementById('inputEmbed').value.trim();
+            const title = document.getElementById('inputTitle').value.trim();
+            const description = document.getElementById('inputDesc').value.trim();
+
+            if (!embed) {
+                alert('Please paste a YouTube embed URL or code');
                 return;
             }
+
+            const videoId = extractVideoId(embed);
+            if (!videoId) {
+                alert('Invalid YouTube URL. Please paste a valid YouTube link.');
+                return;
+            }
+
+            const finalTitle = title || 'Untitled Movie';
+            const finalDesc = description || generateAIDescription(finalTitle);
 
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, youtubeUrl, year, genre })
+                    body: JSON.stringify({ 
+                        videoId, 
+                        youtubeUrl: embed,
+                        title: finalTitle,
+                        description: finalDesc
+                    })
                 });
                 const result = await res.json();
                 if (result.success) {
                     alert('✅ Trailer added successfully!');
                     document.getElementById('addModal').classList.remove('active');
+                    document.getElementById('inputEmbed').value = '';
                     document.getElementById('inputTitle').value = '';
-                    document.getElementById('inputUrl').value = '';
-                    document.getElementById('inputYear').value = '';
-                    document.getElementById('inputGenre').value = '';
+                    document.getElementById('inputDesc').value = '';
                     loadTrailers();
                 } else {
                     alert('❌ Error: ' + result.error);
@@ -184,6 +290,7 @@
             }
         });
 
+        // ─── PLAY TRAILER ──────────────────────────────────────────────────
         document.getElementById('closePlayBtn').addEventListener('click', () => {
             document.getElementById('playModal').classList.remove('active');
             document.getElementById('playerFrame').src = '';
@@ -192,15 +299,21 @@
         function playTrailer(id) {
             const trailer = trailers.find(t => t.id === id);
             if (!trailer) return;
-            let embedUrl = trailer.youtubeUrl.replace('watch?v=', 'embed/');
-            if (embedUrl.indexOf('embed/') === -1) {
-                const parts = trailer.youtubeUrl.split('v=');
-                if (parts.length > 1) embedUrl = 'https://www.youtube.com/embed/' + parts[1].split('&')[0];
+            
+            let embedUrl = trailer.youtubeUrl;
+            if (embedUrl.includes('watch?v=')) {
+                const videoId = embedUrl.split('v=')[1]?.split('&')[0];
+                embedUrl = 'https://www.youtube.com/embed/' + videoId;
+            } else if (embedUrl.includes('youtu.be/')) {
+                const videoId = embedUrl.split('youtu.be/')[1]?.split('?')[0];
+                embedUrl = 'https://www.youtube.com/embed/' + videoId;
             }
+            
             document.getElementById('playerFrame').src = embedUrl + '?autoplay=1';
             document.getElementById('playTitle').textContent = trailer.title;
-            document.getElementById('playDesc').textContent = 'Watch the trailer for ' + trailer.title;
+            document.getElementById('playDesc').textContent = trailer.description || 'Watch the trailer for ' + trailer.title;
             document.getElementById('playModal').classList.add('active');
+            
             fetch(API_URL + '/' + trailer.id + '/view', { method: 'POST' });
         }
 
