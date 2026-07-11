@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MovieVerse - Watch Latest Movie Trailers</title>
+
+<link rel="preconnect" href="https://image.tmdb.org">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#0f172a;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
+}
+
+a{
+text-decoration:none;
+color:white;
+}
+
+header{
+position:fixed;
+top:0;
+left:0;
+right:0;
+height:70px;
+background:#111827;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 40px;
+z-index:1000;
+box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+.logo{
+font-size:32px;
+font-weight:bold;
+color:#e50914;
+}
+
+nav{
+display:flex;
+gap:30px;
+}
+
+nav a{
+font-size:15px;
+transition:.3s;
+}
+
+nav a:hover{
+color:#ffd54f;
+}
+
+.search{
+display:flex;
+align-items:center;
+}
+
+.search input{
+width:280px;
+height:42px;
+border:none;
+border-radius:30px;
+padding:0 20px;
+font-size:15px;
+outline:none;
+}
+
+.hero{
+
+margin-top:70px;
+
+height:650px;
+
+background:url('https://image.tmdb.org/t/p/original/9nhjGaFLKtddDPtPaX5EmKqsWdH.jpg');
+
+background-size:cover;
+
+background-position:center;
+
+display:flex;
+
+align-items:center;
+
+padding:70px;
+
+position:relative;
+
+}
+
+.hero::before{
+
+content:'';
+
+position:absolute;
+
+inset:0;
+
+background:linear-gradient(to right,#000 20%,transparent);
+
+}
+
+.hero-content{
+
+position:relative;
+
+max-width:650px;
+
+}
+
+.hero h1{
+
+font-size:60px;
+
+margin-bottom:20px;
+
+}
+
+.hero p{
+
+font-size:18px;
+
+line-height:1.8;
+
+color:#ddd;
+
+}
+
+.hero-buttons{
+
+margin-top:40px;
+
+display:flex;
+
+gap:20px;
+
+}
+
+.btn{
+
+padding:14px 35px;
+
+border-radius:50px;
+
+font-weight:bold;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+.watch{
+
+background:#e50914;
+
+}
+
+.info{
+
+background:#374151;
+
+}
+
+.section{
+
+padding:60px;
+
+}
+
+.section-title{
+
+font-size:34px;
+
+margin-bottom:30px;
+
+}
+
+.movies{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+
+gap:25px;
+
+}
+
+.card{
+
+background:#1e293b;
+
+border-radius:15px;
+
+overflow:hidden;
+
+transition:.35s;
+
+cursor:pointer;
+
+}
+
+.card:hover{
+
+transform:translateY(-8px);
+
+box-shadow:0 15px 30px rgba(0,0,0,.4);
+
+}
+
+.card img{
+
+width:100%;
+
+display:block;
+
+}
+
+.card-body{
+
+padding:15px;
+
+}
+
+.card h3{
+
+font-size:18px;
+
+margin-bottom:10px;
+
+}
+
+.rating{
+
+color:#ffd54f;
+
+margin-bottom:10px;
+
+}
+
+.release{
+
+font-size:14px;
+
+color:#bbb;
+
+}
+
+.ad{
+
+margin:60px;
+
+height:90px;
+
+background:#202938;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:30px;
+
+border-radius:12px;
+
+color:#aaa;
+
+}
+
+footer{
+
+padding:50px;
+
+text-align:center;
+
+background:#111827;
+
+color:#888;
+
+margin-top:70px;
+
+}
+
+@media(max-width:900px){
+
+header{
+
+padding:20px;
+
+flex-direction:column;
+
+height:auto;
+
+gap:15px;
+
+}
+
+.hero{
+
+height:auto;
+
+padding:40px 20px;
+
+}
+
+.hero h1{
+
+font-size:38px;
+
+}
+
+.search input{
+
+width:100%;
+
+}
+
+.section{
+
+padding:20px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">MovieVerse</div>
+
+<nav>
+
+<a href="#">Home</a>
+
+<a href="#">Movies</a>
+
+<a href="#">Trending</a>
+
+<a href="#">Upcoming</a>
+
+<a href="#">Genres</a>
+
+</nav>
+
+<div class="search">
+
+<input id="searchBox" placeholder="Search Movies...">
+
+</div>
+
+</header>
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>Watch Latest Movie Trailers</h1>
+
+<p>
+
+Discover trending movies, upcoming releases and official trailers from around the world.
+
+</p>
+
+<div class="hero-buttons">
+
+<div class="btn watch">
+
+▶ Watch Trailer
+
+</div>
+
+<div class="btn info">
+
+More Info
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<div class="section">
+
+<div class="section-title">
+
+🔥 Trending Movies
+
+</div>
+
+<div class="movies" id="trendingMovies">
+
+</div>
+
+</div>
+
+<div class="ad">
+
+728 x 90 Adsterra Banner
+
+</div>
+
+<footer>
+
+© 2026 MovieVerse
+
+</footer>
+
+<script>
+
+const apiKey="5435e1c8216e371197f604be65aac260";
+
+async function loadTrending(){
+
+const url=`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`;
+
+const res=await fetch(url);
+
+const data=await res.json();
+
+const container=document.getElementById("trendingMovies");
+
+container.innerHTML="";
+
+data.results.slice(0,12).forEach(movie=>{
+
+container.innerHTML+=`
+
+<div class="card">
+
+<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}">
+
+<div class="card-body">
+
+<h3>${movie.title}</h3>
+
+<div class="rating">
+
+⭐ ${movie.vote_average.toFixed(1)}
+
+</div>
+
+<div class="release">
+
+${movie.release_date}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+loadTrending();
+
+</script>
+
+</body>
+</html>
