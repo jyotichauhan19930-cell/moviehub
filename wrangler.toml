@@ -1,0 +1,6 @@
+name = "trailer-hub"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "TRAILERS"
+id = "d29f32eb57744abdb7bf4b1886cbaa70"
